@@ -1,0 +1,1285 @@
+<title>SolidWorks on M2 Mac</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+/* ── Design tokens (light default) ── */
+:root {
+  --bg:           #F4F6FB;
+  --surface:      #FFFFFF;
+  --surface-2:    #EDF0F8;
+  --border:       #D4DAE9;
+  --text:         #111827;
+  --text-2:       #5A6580;
+  --text-3:       #9AA2BB;
+  --accent:       #D44D08;
+  --accent-dim:   #FFF0E8;
+  --accent-line:  #F5C3A4;
+  --ok:           #1A7A51;
+  --ok-dim:       #E6F4ED;
+  --warn:         #8F6200;
+  --warn-dim:     #FFF7E0;
+  --bad:          #B72030;
+  --bad-dim:      #FCEDEF;
+  --info-dim:     #EDF0F8;
+  --code-bg:      #141B2E;
+  --code-text:    #C8D3F0;
+  --code-muted:   #4D5875;
+  --nav-w:        220px;
+  --content-max:  700px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:           #0C1018;
+    --surface:      #141B28;
+    --surface-2:    #1A2235;
+    --border:       #252E45;
+    --text:         #DDE3F2;
+    --text-2:       #7A85A6;
+    --text-3:       #3E4A65;
+    --accent:       #E8580C;
+    --accent-dim:   #271208;
+    --accent-line:  #5C2508;
+    --ok:           #2EA86A;
+    --ok-dim:       #091F14;
+    --warn:         #D4A029;
+    --warn-dim:     #1A1400;
+    --bad:          #D93545;
+    --bad-dim:      #1E0810;
+    --info-dim:     #1A2235;
+    --code-bg:      #080D16;
+    --code-text:    #C8D3F0;
+    --code-muted:   #4D5875;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg:           #0C1018;
+  --surface:      #141B28;
+  --surface-2:    #1A2235;
+  --border:       #252E45;
+  --text:         #DDE3F2;
+  --text-2:       #7A85A6;
+  --text-3:       #3E4A65;
+  --accent:       #E8580C;
+  --accent-dim:   #271208;
+  --accent-line:  #5C2508;
+  --ok:           #2EA86A;
+  --ok-dim:       #091F14;
+  --warn:         #D4A029;
+  --warn-dim:     #1A1400;
+  --bad:          #D93545;
+  --bad-dim:      #1E0810;
+  --info-dim:     #1A2235;
+  --code-bg:      #080D16;
+  --code-text:    #C8D3F0;
+  --code-muted:   #4D5875;
+}
+
+/* ── Reset & base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  min-height: 100vh;
+}
+
+a { color: var(--accent); }
+a:hover { opacity: 0.8; }
+
+/* ── Page header ── */
+.page-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 2.25rem 2rem 1.85rem;
+}
+
+.header-inner {
+  max-width: calc(var(--nav-w) + var(--content-max) + 4rem);
+  margin: 0 auto;
+}
+
+.eyebrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.45rem;
+}
+
+.page-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(1.75rem, 4vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.15;
+  text-wrap: balance;
+  margin-bottom: 0.4rem;
+}
+
+.page-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-2);
+  max-width: 540px;
+  line-height: 1.6;
+  margin-bottom: 1.1rem;
+}
+
+.badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.badge {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+  padding: 0.22rem 0.6rem;
+  border-radius: 4px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+}
+
+.badge.hi {
+  background: var(--accent-dim);
+  border-color: var(--accent-line);
+  color: var(--accent);
+}
+
+/* ── Two-column layout ── */
+.layout {
+  display: grid;
+  grid-template-columns: var(--nav-w) 1fr;
+  max-width: calc(var(--nav-w) + var(--content-max) + 4rem);
+  margin: 0 auto;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+  padding: 1.75rem 0 2rem;
+  scrollbar-width: thin;
+}
+
+.nav-group-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  padding: 0 1rem;
+  margin: 1.1rem 0 0.45rem;
+}
+
+.nav-group-label:first-child { margin-top: 0; }
+
+.nav-link {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 0.32rem 1rem;
+  text-decoration: none;
+  font-size: 0.82rem;
+  color: var(--text-2);
+  transition: color 0.12s, background 0.12s;
+  border-left: 2px solid transparent;
+}
+
+.nav-link:hover {
+  color: var(--text);
+  background: var(--surface-2);
+}
+
+.nav-link.active {
+  color: var(--accent);
+  background: var(--accent-dim);
+  border-left-color: var(--accent);
+  font-weight: 500;
+}
+
+.nav-n {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  color: var(--text-3);
+  min-width: 18px;
+  flex-shrink: 0;
+}
+
+.nav-link.active .nav-n { color: var(--accent); opacity: 0.7; }
+
+/* ── Content column ── */
+.content {
+  padding: 2.5rem 2.5rem 5rem;
+}
+
+/* ── Sections ── */
+.section {
+  margin-bottom: 3.25rem;
+  scroll-margin-top: 1.5rem;
+}
+
+.step-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.35rem;
+}
+
+.step-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-wrap: balance;
+  margin-bottom: 0.75rem;
+}
+
+.intro {
+  font-size: 0.92rem;
+  color: var(--text-2);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+.section-rule {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 3rem 0;
+}
+
+/* ── Sub-headings ── */
+.sub {
+  font-family: 'Syne', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 1.5rem 0 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.sub::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 0.85em;
+  background: var(--accent);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ── Lists ── */
+.steps {
+  padding-left: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin: 0.6rem 0 0.85rem;
+}
+
+.steps li {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--text);
+}
+
+.steps li strong { font-weight: 600; }
+
+/* ── Prereq rows ── */
+.prereq-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin: 0.75rem 0 1rem;
+}
+
+.prereq {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 0.6rem 0.9rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+}
+
+.prereq-arrow {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--accent);
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+}
+
+.prereq-name {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.prereq-note {
+  font-size: 0.78rem;
+  color: var(--text-2);
+  margin-top: 0.15rem;
+  line-height: 1.5;
+}
+
+/* ── Compat grid ── */
+.compat {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 1rem 0 1.25rem;
+}
+
+.compat-col h4 {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.55rem;
+}
+
+.col-ok h4  { color: var(--ok); }
+.col-warn h4 { color: var(--warn); }
+.col-bad h4  { color: var(--bad); }
+
+.compat-item {
+  font-size: 0.81rem;
+  color: var(--text-2);
+  padding: 0.18rem 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  line-height: 1.45;
+}
+
+.col-ok  .compat-item::before { content: "✓"; color: var(--ok);   font-size: 0.72rem; flex-shrink: 0; }
+.col-warn .compat-item::before { content: "◐"; color: var(--warn); font-size: 0.72rem; flex-shrink: 0; }
+.col-bad  .compat-item::before { content: "✕"; color: var(--bad);  font-size: 0.72rem; flex-shrink: 0; }
+
+/* ── Callouts ── */
+.callout {
+  display: flex;
+  gap: 0.65rem;
+  padding: 0.8rem 1rem;
+  border-radius: 5px;
+  font-size: 0.86rem;
+  line-height: 1.6;
+  margin: 0.85rem 0;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.callout-ico { flex-shrink: 0; font-size: 0.85rem; margin-top: 0.08em; }
+.callout p   { margin-top: 0.3rem; }
+.callout p:first-child { margin-top: 0; }
+.callout strong { font-weight: 600; color: var(--text); }
+
+.callout.warn    { background: var(--warn-dim); border-color: var(--warn);   color: var(--text); }
+.callout.ok      { background: var(--ok-dim);   border-color: var(--ok);    color: var(--text); }
+.callout.danger  { background: var(--bad-dim);  border-color: var(--bad);   color: var(--text); }
+.callout.info    { background: var(--info-dim); border-color: var(--border); color: var(--text); }
+
+.callout.warn   .callout-ico { color: var(--warn); }
+.callout.ok     .callout-ico { color: var(--ok);   }
+.callout.danger .callout-ico { color: var(--bad);  }
+.callout.info   .callout-ico { color: var(--text-3); }
+
+/* ── Code blocks ── */
+.code-block {
+  background: var(--code-bg);
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 0.65rem 0 0.85rem;
+}
+
+.code-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--code-muted);
+  padding: 0.5rem 1rem 0.35rem;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.code-block pre {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.82rem;
+  color: var(--code-text);
+  padding: 0.75rem 1rem;
+  overflow-x: auto;
+  line-height: 1.7;
+  white-space: pre;
+}
+
+code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.82em;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  padding: 0.08em 0.32em;
+  border-radius: 3px;
+  color: var(--accent);
+}
+
+/* ── Registry paths ── */
+.reg-path {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.77rem;
+  color: var(--code-text);
+  background: var(--code-bg);
+  border-left: 3px solid var(--accent);
+  padding: 0.55rem 0.85rem;
+  border-radius: 0 4px 4px 0;
+  margin: 0.45rem 0 0.65rem;
+  overflow-x: auto;
+  white-space: pre;
+  line-height: 1.5;
+}
+
+/* ── Settings table ── */
+.tbl-wrap { overflow-x: auto; margin: 0.65rem 0 1rem; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+th {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  text-align: left;
+  padding: 0.4rem 0.75rem;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.55;
+}
+
+td:first-child { color: var(--text-2); white-space: nowrap; }
+tr:last-child td { border-bottom: none; }
+
+/* ── Troubleshooting ── */
+.trouble { margin-bottom: 1.35rem; }
+.trouble-q {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text);
+  margin-bottom: 0.3rem;
+}
+.trouble-a {
+  font-size: 0.87rem;
+  color: var(--text-2);
+  line-height: 1.7;
+}
+
+/* ── Sources ── */
+.sources {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  margin-top: 2rem;
+}
+
+.sources-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 0.65rem;
+}
+
+.sources a {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-2);
+  text-decoration: none;
+  padding: 0.2rem 0;
+  transition: color 0.12s;
+}
+
+.sources a:hover { color: var(--accent); text-decoration: underline; }
+
+/* ── Mobile ── */
+@media (max-width: 740px) {
+  .layout { grid-template-columns: 1fr; }
+
+  .sidebar {
+    position: static;
+    height: auto;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 0.6rem 0.75rem;
+    gap: 0.2rem;
+    scrollbar-width: none;
+  }
+
+  .sidebar::-webkit-scrollbar { display: none; }
+  .nav-group-label { display: none; }
+
+  .nav-link {
+    white-space: nowrap;
+    font-size: 0.78rem;
+    padding: 0.28rem 0.55rem;
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 4px;
+  }
+
+  .nav-link.active {
+    border-left-color: transparent;
+    border-bottom-color: var(--accent);
+  }
+
+  .content { padding: 1.5rem 1.1rem 3rem; }
+  .compat { grid-template-columns: 1fr; gap: 0.75rem; }
+  .page-header { padding: 1.5rem 1.1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+</style>
+
+<!-- ═══════════════════════════════ HEADER ═══════════════════════════════ -->
+<header class="page-header">
+  <div class="header-inner">
+    <p class="eyebrow">Installation Guide · SolidWorks Student Edition</p>
+    <h1 class="page-title">SolidWorks on M2 Mac</h1>
+    <p class="page-subtitle">Running SolidWorks Student Edition via VMware Fusion Pro on Apple Silicon — a complete guide built and validated for M2 Pro hardware.</p>
+    <div class="badge-row">
+      <span class="badge hi">MacBook Pro M2 Pro</span>
+      <span class="badge hi">16 GB RAM</span>
+      <span class="badge">VMware Fusion Pro 26H1</span>
+      <span class="badge">Windows 11 ARM64</span>
+      <span class="badge">SolidWorks Student Ed.</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════ LAYOUT ═══════════════════════════════ -->
+<div class="layout">
+
+  <!-- ─── Sidebar nav ─── -->
+  <nav class="sidebar" aria-label="Guide navigation">
+    <p class="nav-group-label">Overview</p>
+    <a class="nav-link" href="#overview"><span class="nav-n">—</span>Reality Check</a>
+    <a class="nav-link" href="#prereqs"><span class="nav-n">—</span>Prerequisites</a>
+    <p class="nav-group-label">Steps</p>
+    <a class="nav-link" href="#step-1"><span class="nav-n">01</span>VMware Fusion Pro</a>
+    <a class="nav-link" href="#step-2"><span class="nav-n">02</span>Windows 11 ARM ISO</a>
+    <a class="nav-link" href="#step-3"><span class="nav-n">03</span>Create the VM</a>
+    <a class="nav-link" href="#step-4"><span class="nav-n">04</span>Install Windows</a>
+    <a class="nav-link" href="#step-5"><span class="nav-n">05</span>Post-Install Setup</a>
+    <a class="nav-link" href="#step-6"><span class="nav-n">06</span>Download SolidWorks</a>
+    <a class="nav-link" href="#step-7"><span class="nav-n">07</span>Install SolidWorks</a>
+    <a class="nav-link" href="#step-8"><span class="nav-n">08</span>Activate License</a>
+    <a class="nav-link" href="#step-9"><span class="nav-n">09</span>OpenGL Fix (skip SW 2026)</a>
+    <a class="nav-link" href="#step-10"><span class="nav-n">10</span>Verify</a>
+    <p class="nav-group-label">Reference</p>
+    <a class="nav-link" href="#troubleshooting"><span class="nav-n">—</span>Troubleshooting</a>
+    <a class="nav-link" href="#sources"><span class="nav-n">—</span>Sources</a>
+  </nav>
+
+  <!-- ─── Content ─── -->
+  <main class="content">
+
+    <!-- REALITY CHECK -->
+    <section class="section" id="overview">
+      <p class="step-tag">Before You Begin</p>
+      <h2 class="step-title">Compatibility Reality Check</h2>
+      <p class="intro">SolidWorks has no native macOS version and officially supports only x86-64 Windows. On an M2 Mac, it runs through two translation layers: VMware Fusion runs Windows 11 ARM, and Windows ARM then emulates x86 for SolidWorks itself. Know the trade-offs before you start the install.</p>
+
+      <div class="compat">
+        <div class="compat-col col-ok">
+          <h4>Works</h4>
+          <div class="compat-item">Part modeling</div>
+          <div class="compat-item">Sketching tools</div>
+          <div class="compat-item">Assemblies (light)</div>
+          <div class="compat-item">2D drawings</div>
+          <div class="compat-item">eDrawings viewer</div>
+          <div class="compat-item">License activation</div>
+        </div>
+        <div class="compat-col col-warn">
+          <h4>Limited</h4>
+          <div class="compat-item">Large assemblies</div>
+          <div class="compat-item">Basic Simulation</div>
+          <div class="compat-item">PhotoView 360</div>
+          <div class="compat-item">Toolbox (slow load)</div>
+          <div class="compat-item">Render quality</div>
+        </div>
+        <div class="compat-col col-bad">
+          <h4>Won't Work</h4>
+          <div class="compat-item">RealView Graphics</div>
+          <div class="compat-item">Hardware OpenGL</div>
+          <div class="compat-item">Certified GPU features</div>
+          <div class="compat-item">Flow Simulation</div>
+        </div>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-ico">⚠</span>
+        <div><strong>Critical OpenGL limitation.</strong> VMware Fusion's 3D acceleration on Windows ARM is DirectX 11 only — not OpenGL. SolidWorks requires OpenGL. Without a fix, SolidWorks crashes or shows a black screen. Step 8 applies a registry workaround that resolves this. Don't skip it.</div>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-ico">ℹ</span>
+        <div><strong>Performance expectation.</strong> With 8 GB allocated to the VM, light coursework — individual parts, small assemblies under ~50 components — runs acceptably. Rebuilds will be slower than a native Windows machine. Heavy simulation or rendering belongs on a campus workstation.</div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- PREREQUISITES -->
+    <section class="section" id="prereqs">
+      <p class="step-tag">Prerequisites</p>
+      <h2 class="step-title">What You'll Need</h2>
+      <p class="intro">Gather these before starting. Budget 2–3 hours total — Windows setup and the SolidWorks download each take time. A stable internet connection matters throughout.</p>
+
+      <div class="prereq-grid">
+        <div class="prereq">
+          <span class="prereq-arrow">→</span>
+          <div>
+            <div class="prereq-name">VMware Fusion Pro 26H1</div>
+            <div class="prereq-note">Free for personal use — requires a free Broadcom account to download</div>
+          </div>
+        </div>
+        <div class="prereq">
+          <span class="prereq-arrow">→</span>
+          <div>
+            <div class="prereq-name">Windows 11 ARM64 ISO</div>
+            <div class="prereq-note">~5 GB — UIC students: available from the UIC IT webstore. Others: see Step 2 for alternatives</div>
+          </div>
+        </div>
+        <div class="prereq">
+          <span class="prereq-arrow">→</span>
+          <div>
+            <div class="prereq-name">SolidWorks Student Edition + serial number</div>
+            <div class="prereq-note">UIC students: available free from the UIC IT webstore (search "UIC webstore SolidWorks"). Serial number format: 9010 XXXX XXXX XXXX XXXX XXXX</div>
+          </div>
+        </div>
+        <div class="prereq">
+          <span class="prereq-arrow">→</span>
+          <div>
+            <div class="prereq-name">100+ GB free disk space (recommended)</div>
+            <div class="prereq-note">Windows: ~15 GB · SolidWorks core: ~8–15 GB · VM overhead and updates: ~15 GB. <strong>The VM virtual disk is hard to resize later</strong> — allocate as much as you can spare upfront. 80 GB is the minimum; 120–150 GB is safer if your Mac has the room.</div>
+          </div>
+        </div>
+        <div class="prereq">
+          <span class="prereq-arrow">→</span>
+          <div>
+            <div class="prereq-name">macOS Sequoia 15 or later</div>
+            <div class="prereq-note">Required by VMware Fusion Pro 26H1 — verified against official Broadcom documentation</div>
+          </div>
+        </div>
+        <div class="prereq">
+          <span class="prereq-arrow">→</span>
+          <div>
+            <div class="prereq-name">Stable internet connection</div>
+            <div class="prereq-note">SolidWorks Installation Manager downloads components on the fly during install</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- STEP 1 -->
+    <section class="section" id="step-1">
+      <p class="step-tag">Step 01</p>
+      <h2 class="step-title">Install VMware Fusion Pro</h2>
+      <p class="intro">VMware Fusion Pro is free for personal use, but Broadcom's portal is genuinely difficult to navigate and has a hidden requirement that blocks downloads until your account is fully set up. Follow the steps below exactly — the "No data found" error means your account profile is incomplete, not that Fusion is unavailable.</p>
+
+      <div class="sub">Part 1 — Complete your Broadcom account profile (required)</div>
+
+      <div class="callout danger">
+        <span class="callout-ico">⛔</span>
+        <div><strong>"No data found" means your profile is incomplete.</strong> Broadcom requires a Trade Compliance form to be submitted before any downloads are unlocked. Without it, every download page shows "No data found" regardless of the URL you use.</div>
+      </div>
+
+      <ol class="steps">
+        <li>Go to <strong>support.broadcom.com</strong> and create a free account (or sign in). Use your real name and a permanent email address.</li>
+        <li>After signing in, click your <strong>account icon</strong> (top right) → <strong>Edit Profile</strong>.</li>
+        <li>Fill in your <strong>full address, city, state, country, and phone number</strong> — all fields must be complete.</li>
+        <li>Look for a <strong>Trade Compliance</strong> section or link in your profile. Fill out the short export compliance questionnaire. This is a US government requirement Broadcom enforces for all downloads.</li>
+        <li>Save your profile. Downloads should now unlock on the next page load.</li>
+      </ol>
+
+      <div class="sub">Part 2 — Download VMware Fusion Pro</div>
+      <ol class="steps">
+        <li>Go to <strong>vmware.com/products/desktop-hypervisor/workstation-and-fusion</strong> and click <strong>"Download Now"</strong> (the general button — not a Mac-specific link).</li>
+        <li>You'll be redirected to the Broadcom downloads page. Click the link labelled <strong>"Free Software Downloads available HERE"</strong>, which takes you to <code>support.broadcom.com/group/ecx/free-downloads</code>.</li>
+        <li>Select <strong>VMware Fusion</strong> → select the latest release (currently <strong>VMware Fusion 26H1</strong> or similar year-based label) → choose the latest release version.</li>
+        <li>Click the <strong>Terms and Conditions</strong> link — this opens the agreement in a new tab. Review it, then close that tab and return to the download page.</li>
+        <li>Back on the download page, check the <strong>terms acceptance checkbox</strong> (it only activates after you've visited the agreement link) → click Download.</li>
+        <li>The <code>.dmg</code> installer downloads (~600 MB).</li>
+      </ol>
+
+      <div class="sub">Part 3 — Install on your Mac</div>
+      <ol class="steps">
+        <li>Open the downloaded <code>.dmg</code> and drag <strong>VMware Fusion</strong> to your Applications folder.</li>
+        <li>Launch it from Applications. It will prompt for your system password to install a kernel extension.</li>
+        <li>Open <strong>System Settings → Privacy & Security → Accessibility</strong> and toggle <strong>VMware Fusion</strong> on. Restart your Mac if prompted.</li>
+        <li>When VMware asks for a license key, select the option for <strong>personal/free use</strong> (exact wording varies by version). No key needed.</li>
+      </ol>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- STEP 2 -->
+    <section class="section" id="step-2">
+      <p class="step-tag">Step 02</p>
+      <h2 class="step-title">Get the Windows 11 ARM64 ISO</h2>
+      <p class="intro">Microsoft's standard download page only serves x86-64 ISOs — you cannot download an ARM64 image from there. UIC students have a simpler option: the UIC IT webstore provides a properly licensed ARM64 ISO directly. Use that if you're a UIC student; the other methods are fallbacks.</p>
+
+      <div class="sub">Method A — UIC IT Webstore (UIC Students — Recommended)</div>
+      <ol class="steps">
+        <li>Go to <strong>webstore.illinois.edu/shop/product.aspx?zpid=1288</strong> and sign in with your UIC NetID.</li>
+        <li>Download <strong>"Windows 11 25H2 Arm64"</strong> (or the latest Arm64 version listed). This is a fully licensed ISO under UIC's Microsoft campus agreement — no workarounds needed.</li>
+        <li>Save the <code>.iso</code> somewhere easy to find (e.g. your Desktop or Downloads folder).</li>
+      </ol>
+
+      <div class="sub">Method B — UUP Dump (Non-UIC or fallback)</div>
+      <ol class="steps">
+        <li>Go to <strong>uupdump.net</strong>.</li>
+        <li>In the search box, type <strong>"Windows 11"</strong> and press Enter. When results appear, open the <strong>Architecture</strong> filter and select <strong>arm64</strong>. Do <em>not</em> use the "Latest Dev/Beta channel" shortcut — those are pre-release builds and can cause instability under a VM.</li>
+        <li>From the filtered results, pick the newest <strong>stable public release</strong> (look for a build labelled with the current GA version, e.g. 25H2 or later — avoid anything marked Dev, Beta, or Canary).</li>
+        <li>Click Next → choose your language → select <strong>Windows 11 Pro</strong> (recommended over Home).</li>
+        <li>On the download options screen:
+          <ul>
+            <li><strong>Download method:</strong> select <strong>"Download and convert to ISO"</strong></li>
+            <li><strong>Conversion options:</strong> uncheck <strong>"Include updates"</strong> (it says "Windows converter only" — it will block the macOS script). Leave all other options unchecked.</li>
+          </ul>
+        </li>
+        <li>Click <strong>"Create download package."</strong> You'll download a small .zip (~1 MB).</li>
+        <li>⚠ <strong>Before proceeding:</strong> check whether the summary panel on the right shows a warning that says <em>"Windows is required to create the ISO image."</em> If it does, skip to Method B — the macOS script will not work for that build, and Method B is simpler anyway.</li>
+        <li>If no Windows warning appears: extract the .zip and run in Terminal:
+          <div class="code-block">
+            <div class="code-label">macOS Terminal</div>
+            <pre>chmod +x uup_download_macos.sh
+bash uup_download_macos.sh</pre>
+          </div>
+        </li>
+        <li>The script downloads components from Microsoft's servers and builds the ISO (~5 GB, takes 20–40 minutes). The finished <code>.iso</code> appears in the same folder.</li>
+      </ol>
+
+      <div class="sub">Method C — Windows Insider Program (fallback if UUP Dump shows a Windows-required warning)</div>
+      <ol class="steps">
+        <li>Sign in or sign up at <strong>insider.windows.com</strong> with a free Microsoft account.</li>
+        <li>Go to <strong>insider.windows.com/en-us/getting-started#install</strong> and scroll to the ISO download section.</li>
+        <li>Under edition, select <strong>Windows 11 Client ARM64</strong> and choose the <strong>Release Preview</strong> channel (most stable Insider option). Select your language and click Confirm.</li>
+        <li>Download the ISO (~5–6 GB) directly — no scripts or conversion needed.</li>
+      </ol>
+
+      <div class="callout warn">
+        <span class="callout-ico">⚠</span>
+        <div><strong>Do not use a standard x86-64 Windows ISO.</strong> VMware Fusion on Apple Silicon will not boot it. You need the ARM64 build specifically. Double-check the filename — it should contain "ARM64" or "arm64."</div>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-ico">ℹ</span>
+        <div>If the UUP Dump script fails with a permission error, ensure Xcode Command Line Tools are installed: run <code>xcode-select --install</code> in Terminal first.</div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- STEP 3 -->
+    <section class="section" id="step-3">
+      <p class="step-tag">Step 03</p>
+      <h2 class="step-title">Create the Virtual Machine</h2>
+      <p class="intro">Configure the VM with enough resources for SolidWorks while leaving headroom for macOS. With 16 GB total RAM, 8 GB to the VM is the practical balance — enough for SolidWorks to run, enough left over for macOS to stay responsive.</p>
+
+      <ol class="steps">
+        <li>Open <strong>VMware Fusion Pro</strong>.</li>
+        <li>Go to <strong>File → New</strong> (or click "+" in the VM library).</li>
+        <li>Select <strong>"Install from disc or image"</strong> and drag in your Windows 11 ARM64 ISO. Click Continue.</li>
+        <li>VMware shows a <strong>"Choose Firmware Type"</strong> screen. Leave it on <strong>UEFI</strong> (already selected — Windows 11 requires it). Leave <strong>"UEFI Secure Boot" unchecked</strong> — enabling it can block VM drivers and isn't needed here. Click Continue.</li>
+        <li>VMware shows a <strong>"Choose Encryption"</strong> screen. Windows 11 requires a virtual TPM, which needs some VM files to be encrypted. Leave the selection on <strong>"Only the files needed to support a TPM are encrypted"</strong> (the default). Click <strong>"Auto Generate Password"</strong> — leave <strong>"Remember Password and store it in Mac's Keychain"</strong> checked so macOS handles it automatically. Click Continue.</li>
+        <li>VMware should auto-detect <strong>"Windows 11 ARM 64-bit."</strong> If not, set it manually from the dropdown.</li>
+        <li>Click <strong>"Customize Settings"</strong> — VMware will first prompt you to name and save the VM file (e.g., "Windows 11 ARM"). After saving, the settings panel opens automatically. If it doesn't, right-click the VM in the library → <strong>Settings</strong>, or go to <strong>Virtual Machine → Settings</strong> from the menu bar.</li>
+        <li><strong>Do not start the VM yet.</strong> Apply all settings below first — particularly 3D graphics, which must be enabled before Windows boots for the first time.</li>
+      </ol>
+
+      <p class="intro">Apply these settings in the VM settings panel:</p>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Setting</th><th>Value</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Memory (RAM)</td><td><code>8192 MB</code></td><td>8 GB is the sweet spot on 16 GB total — leaves macOS 8 GB to stay responsive. 10 GB is possible but can starve macOS.</td></tr>
+            <tr><td>Processors</td><td><code>4–6 cores</code></td><td>4 is fine for light work; 6 may reduce rebuild times. Leave at least 4 for macOS.</td></tr>
+            <tr><td>Hard Disk</td><td><code>80 GB</code></td><td>SolidWorks + Windows + add-ins fill ~45–55 GB</td></tr>
+            <tr><td>Accelerate 3D Graphics</td><td><code>Enabled</code></td><td>Under Display — <strong>required</strong>, see warning below</td></tr>
+            <tr><td>Video Memory</td><td><code>2 GB</code></td><td>Set to the slider's maximum</td></tr>
+            <tr><td>Network Adapter</td><td><code>NAT</code></td><td>Required for license activation</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-ico">⚠</span>
+        <div><strong>"Accelerate 3D Graphics" must be enabled</strong> (found under the Display section of VM settings). Without it, SolidWorks will not open at all — even after the OpenGL registry fix in Step 8. Enable it before first boot.</div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- STEP 4 -->
+    <section class="section" id="step-4">
+      <p class="step-tag">Step 04</p>
+      <h2 class="step-title">Install Windows 11 ARM</h2>
+      <p class="intro">The Windows 11 setup process has a few gotchas on a fresh VM, particularly around Microsoft's forced account sign-in. Follow these steps to get a clean local account install.</p>
+
+      <ol class="steps">
+        <li>Start the VM. When you see <strong>"Press any key to boot from CD or DVD…"</strong> click inside the VM window and press any key immediately.</li>
+        <li>The Windows Setup wizard loads. Choose your language and keyboard layout → click <strong>Install Now</strong>.</li>
+        <li>When asked for a product key, click <strong>"I don't have a product key."</strong></li>
+        <li>Select <strong>Windows 11 Pro</strong> as the edition → click Next.</li>
+        <li>Accept the license terms → select <strong>"Custom: Install Windows only (advanced)"</strong>.</li>
+        <li>Select the unallocated disk space → click <strong>Next</strong>. Windows installs and restarts several times automatically (~15–20 min).</li>
+      </ol>
+
+      <div class="sub">Bypass the Network &amp; Microsoft Account Requirement</div>
+      <p class="intro">Windows 11 blocks setup at the network screen and hides the "skip" option until you run a bypass command. The "Next" button will be greyed out — do not try to install a driver. Use the command below instead:</p>
+      <ol class="steps">
+        <li>When setup shows the <strong>"Let's connect you to a network"</strong> screen (Next is greyed out), click inside the VM window to give it focus, then press <strong>Fn + Shift + F10</strong> to open a Command Prompt. (On Mac, F-keys default to media controls — Fn is required to send the actual F10 key to Windows. If it still opens a Mac app, try pressing <strong>Control + Command + G</strong> first to fully capture your keyboard into the VM, then retry Fn + Shift + F10.)</li>
+        <li>Type the following and press Enter:
+          <div class="code-block">
+            <div class="code-label">Windows CMD (inside VM)</div>
+            <pre>OOBE\BYPASSNRO</pre>
+          </div>
+        </li>
+        <li>The VM restarts automatically and returns to the network screen. This time you will see <strong>"I don't have internet"</strong> at the bottom — click it.</li>
+        <li>Windows may show a <strong>"Continue with limited setup"</strong> screen — click it if present. On some builds this screen is skipped entirely.</li>
+        <li>Enter a local username and password, then answer the security questions (used for local password recovery). Complete any remaining prompts. You now have a local Windows account with no Microsoft account required.</li>
+      </ol>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- STEP 5 -->
+    <section class="section" id="step-5">
+      <p class="step-tag">Step 05</p>
+      <h2 class="step-title">Post-Install: VMware Tools & Windows Updates</h2>
+      <p class="intro">Before installing SolidWorks, get the VM into a clean, fully updated state. VMware Tools installs the display drivers, clipboard sharing, and drag-and-drop that make the VM usable.</p>
+
+      <div class="sub">Install VMware Tools</div>
+      <ol class="steps">
+        <li>In the VMware Fusion menu bar: <strong>Virtual Machine → Install VMware Tools</strong>. A virtual DVD mounts inside Windows.</li>
+        <li>Open File Explorer → navigate to the mounted drive (usually D:).</li>
+        <li>Run <code>setup.exe</code> (or <code>setup64.exe</code>). Choose <strong>Complete</strong> installation → click through the wizard → Finish.</li>
+        <li>Restart the VM when prompted.</li>
+      </ol>
+
+      <div class="sub">Install All Windows Updates</div>
+      <ol class="steps">
+        <li>Go to <strong>Settings → Windows Update → Check for Updates</strong>.</li>
+        <li>Install all available updates including optional ones. Restart when prompted.</li>
+        <li>Repeat until the screen shows <strong>"You're up to date."</strong> This typically takes 2–3 rounds.</li>
+      </ol>
+
+      <div class="sub">Install Visual C++ Redistributables</div>
+      <ol class="steps">
+        <li>Inside the VM, open a browser and search <strong>"Visual C++ Redistributable latest"</strong> on Google — the first result is usually the Microsoft Learn page. The direct URL is <code>learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist</code>. Do not try to navigate microsoft.com directly; it's difficult to find the right page from there.</li>
+        <li>On that page, download and install both: <strong>vc_redist.x64.exe</strong> and <strong>vc_redist.x86.exe</strong> (the 2015–2022 versions). SolidWorks is a 32-bit application running on a 64-bit OS, so both are required.</li>
+        <li>Restart the VM once more after installing.</li>
+      </ol>
+
+      <div class="callout info">
+        <span class="callout-ico">ℹ</span>
+        <div>All downloads and installs from this point forward happen <strong>inside the Windows VM</strong>, not on your Mac. Open the browser inside the VM for everything SolidWorks-related.</div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- STEP 6 -->
+    <section class="section" id="step-6">
+      <p class="step-tag">Step 06</p>
+      <h2 class="step-title">Download SolidWorks Student Edition</h2>
+      <p class="intro">UIC students get SolidWorks through the UIC IT webstore at no cost. The download includes the Installation Manager, which then pulls individual components during install — so your VM needs to stay online throughout Step 7.</p>
+
+      <ol class="steps">
+        <li>On your Mac (not in the VM), open a browser and search <strong>"UIC webstore SolidWorks"</strong> — the first result should be the University of Illinois webstore listing. Or go directly to <strong>webstore.illinois.edu</strong> and search for SolidWorks.</li>
+        <li>Click <strong>"Add to Cart."</strong></li>
+        <li>Log in with your <strong>UIC NetID credentials</strong> when prompted.</li>
+        <li>Read the End User License Agreement. If you agree, select <strong>"I Agree."</strong></li>
+        <li>The cart total should show <strong>$0.00</strong> — click <strong>"Check Out."</strong></li>
+        <li>Click <strong>"Download"</strong> to download the SolidWorks installer package.</li>
+        <li>Before running the installer, <strong>note your serial number</strong> from the webstore confirmation or order page. The format is <code>9010 XXXX XXXX XXXX XXXX XXXX</code>. Keep it accessible — you'll need it in Step 7.</li>
+        <li>Transfer the downloaded installer into your Windows VM (drag-and-drop works once VMware Tools is installed, or save to a shared folder).</li>
+      </ol>
+
+      <div class="callout warn">
+        <span class="callout-ico">⚠</span>
+        <div><strong>Keep your serial number accessible</strong> throughout Steps 7–9. The format is typically <code>9010 XXXX XXXX XXXX XXXX XXXX</code>. Copy it somewhere safe before starting the install.</div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- STEP 7 -->
+    <section class="section" id="step-7">
+      <p class="step-tag">Step 07</p>
+      <h2 class="step-title">Install SolidWorks</h2>
+      <p class="intro">Run the Installation Manager inside the Windows VM. Budget 45–90 minutes depending on your internet speed and the components you select. The VM must stay online throughout.</p>
+
+      <ol class="steps">
+        <li>Right-click the SolidWorks Installation Manager executable → <strong>Run as administrator</strong>.</li>
+        <li>A <strong>WinZip Self-Extractor</strong> dialog appears (titled something like <em>SolidWorksSetup2026_2027_SP2_...</em>). The default settings are correct — leave both checkboxes checked ("Overwrite files without prompting" and "When done unzipping open: sldim\sldim.exe"). Click <strong>"Unzip"</strong> and wait for extraction to complete. The Installation Manager (<code>sldim.exe</code>) launches automatically when done.</li>
+        <li>Select <strong>"Install on this computer"</strong> → click Next.</li>
+        <li>Enter your serial number in the <strong>3D Design</strong> field. Leave all other serial number fields blank.</li>
+        <li>Click Next. The manager verifies your serial number against Dassault's servers — the VM must be online (NAT networking).</li>
+        <li>You'll see a warning about unsupported graphics. <strong>This is expected and safe to dismiss.</strong> The OpenGL fix in Step 8 addresses it.</li>
+      </ol>
+
+      <div class="sub">Recommended Component Selection</div>
+
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Component</th><th>Include?</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>SolidWorks (core)</td><td>✓ Yes</td><td>Required</td></tr>
+            <tr><td>eDrawings</td><td>✓ Yes</td><td>Lightweight, useful for sharing files</td></tr>
+            <tr><td>SolidWorks Toolbox</td><td>If needed</td><td>Include if your coursework requires standard hardware</td></tr>
+            <tr><td>SolidWorks Simulation</td><td>Optional</td><td>Runs slowly in a VM — include only if coursework requires it</td></tr>
+            <tr><td>PhotoView 360</td><td>✕ Skip</td><td>GPU rendering — not practical in this environment</td></tr>
+            <tr><td>Flow Simulation</td><td>✕ Skip</td><td>Extremely resource-heavy, effectively unusable in a VM</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ol class="steps" start="6">
+        <li>Accept the license terms → click <strong>Install Now</strong>. The manager downloads and installs. Do not interrupt it.</li>
+        <li>When complete, click <strong>Finish</strong>. Do not launch SolidWorks from this prompt.</li>
+      </ol>
+
+      <div class="callout warn">
+        <span class="callout-ico">⚠</span>
+        <div><strong>Launch SolidWorks now and complete activation (Step 8) before applying the registry fix.</strong> On first launch, SolidWorks will prompt for license activation — complete that process. The app will open but run very slowly without the OpenGL fix; this is expected. Once activated, close SolidWorks and proceed to Step 9 (OpenGL registry fix). This first launch also creates the registry keys Step 9 requires.</div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- STEP 8 -->
+    <section class="section" id="step-8">
+      <p class="step-tag">Step 08</p>
+      <h2 class="step-title">Activate Your License</h2>
+      <p class="intro">On first launch, SolidWorks immediately prompts for license activation. Complete this before applying the OpenGL fix — the app will be slow at this stage, which is expected. This first launch also creates the registry keys needed in Step 9.</p>
+
+      <ol class="steps">
+        <li>Launch <strong>SolidWorks</strong> from the Start menu or desktop shortcut.</li>
+        <li>When the Product Activation dialog appears, select <strong>"Activate automatically over the internet."</strong></li>
+        <li>Confirm your serial number is pre-filled. If not, enter it now.</li>
+        <li>Click <strong>Activate</strong>. SolidWorks contacts Dassault's servers. Ensure the VM is online (NAT network).</li>
+        <li>On success, click <strong>Finish</strong>. SolidWorks opens to the welcome screen — it will be very slow and sluggish without the OpenGL fix. This is normal.</li>
+        <li>Close SolidWorks and proceed to Step 9.</li>
+      </ol>
+
+      <div class="sub">If Your School Uses a Network License Server (SNL)</div>
+      <ol class="steps">
+        <li>Get the <strong>license server hostname or IP address</strong> from your department's IT.</li>
+        <li>In SolidWorks: <strong>Tools → Options → System Options → General → Specify License Server.</strong></li>
+        <li>Enter the server address. The VM must be on the same network — from home, your campus VPN is likely required.</li>
+      </ol>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- STEP 9 -->
+    <section class="section" id="step-9">
+      <p class="step-tag">Step 09</p>
+      <h2 class="step-title">OpenGL Registry Fix <span style="font-size:0.7em;font-weight:500;color:var(--ok);margin-left:0.5em;">(Skip for SW 2026)</span></h2>
+      <p class="intro">This fix was required for SolidWorks 2020–2025 on VMware/ARM. <strong>SolidWorks 2026 does not need it.</strong> SW 2026 automatically detects that the VMware virtual GPU is not a certified card and locks itself into Software OpenGL mode — you can confirm this yourself: in SolidWorks, go to <strong>Tools → Options → System Options → Performance</strong> and look for "Use Software OpenGL." In SW 2026 on VMware it will be checked and grayed out, meaning SolidWorks chose software rendering automatically and the option cannot be toggled. The registry path <code>Performance\Graphics</code> that this fix targets does not exist in SW 2026 because the app no longer uses it.</p>
+
+      <div class="callout ok">
+        <span class="callout-ico">✓</span>
+        <div><strong>If you are running SolidWorks 2026:</strong> skip this step entirely. The "Use Software OpenGL — checked and grayed out" state in Tools → Options → System Options → Performance is expected and correct. SolidWorks is running and will remain stable without any registry edits.</div>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-ico">ℹ</span>
+        <div><strong>What software OpenGL means for performance.</strong> Software OpenGL means all viewport rendering is done by the CPU, not the GPU. This is why the viewport can feel sluggish during model rotation and rebuilds — the rendering bottleneck is structural, not a misconfiguration. Reduce it with the SolidWorks performance settings in Step 10.</div>
+      </div>
+
+      <p style="color:var(--text-2);font-size:0.92em;">The steps below are preserved for users on SolidWorks 2020–2025 who encounter crashes or a black viewport. If you are on SW 2026, stop here.</p>
+
+      <div class="callout warn">
+        <span class="callout-ico">⚠</span>
+        <div><strong>SW 2020–2025 only — You must have completed Step 8 (activation) before this step.</strong> That first launch creates the registry keys you'll edit here. Replace <code>20XX</code> in all paths below with your installed version year.</div>
+      </div>
+
+      <div class="sub">Open Registry Editor</div>
+      <ol class="steps">
+        <li>Press <strong>Win + R</strong>, type <code>regedit</code>, press Enter. Accept the UAC prompt.</li>
+      </ol>
+
+      <div class="sub">Part 1 — Edit the "Current" Graphics Key</div>
+      <ol class="steps">
+        <li>Navigate to:
+          <code class="reg-path">HKEY_CURRENT_USER\Software\SolidWorks\SOLIDWORKS 20XX\Performance\Graphics\Hardware\Current</code>
+        </li>
+        <li>In the right panel, find the <code>Renderer</code> string value. Note the exact text — something like <code>VMware, Inc. SVGA3D</code>. Copy it exactly, character for character.</li>
+        <li>Find the <code>Workarounds</code> DWORD → double-click it → set the base to <strong>Hexadecimal</strong> → enter value <code>4000480</code> → OK.</li>
+      </ol>
+
+      <div class="sub">Part 2 — Create a Renderer Profile Under Gl2Shaders</div>
+      <ol class="steps">
+        <li>Navigate to:
+          <code class="reg-path">HKEY_CURRENT_USER\Software\SolidWorks\SOLIDWORKS 20XX\Performance\Graphics\Hardware\Gl2Shaders\Other</code>
+        </li>
+        <li>Right-click in the <strong>left (key tree) panel</strong> → <strong>New → Key</strong>.</li>
+        <li>Name the new key exactly as your Renderer string from Part 1 (e.g., <code>VMware, Inc. SVGA3D</code>).</li>
+        <li>Click into the new key. Right-click in the <strong>right panel</strong> → <strong>New → DWORD (32-bit) Value</strong> → name it <code>Workarounds</code>.</li>
+        <li>Double-click the new Workarounds DWORD → set base to <strong>Hexadecimal</strong> → enter <code>40000</code> → OK.</li>
+      </ol>
+
+      <div class="sub">Part 3 — Edit the VMware Vendor Key</div>
+      <ol class="steps">
+        <li>Navigate to:
+          <code class="reg-path">HKEY_CURRENT_USER\Software\SolidWorks\SOLIDWORKS 20XX\Performance\Graphics\Hardware\VMware, Inc.</code>
+        </li>
+        <li>If this key doesn't exist, create it: navigate to <code>...Hardware\</code> → right-click → New → Key → name it <code>VMware, Inc.</code></li>
+        <li>Find or create a <code>Workarounds</code> DWORD. Set it to <code>4000480</code> (Hexadecimal).</li>
+        <li>If a sub-key exists inside <code>VMware, Inc.</code> (e.g., <code>Gallium</code> or <code>SVGA3D</code>), open it and set its <code>Workarounds</code> DWORD to <code>4000480</code> as well.</li>
+      </ol>
+
+      <div class="callout ok">
+        <span class="callout-ico">✓</span>
+        <div><strong>Restart Windows fully</strong> after completing all three parts — not just SolidWorks, the entire VM. Registry changes take effect on the next Windows boot.</div>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-ico">ℹ</span>
+        <div><strong>All values must be entered in Hexadecimal.</strong> When the DWORD editor opens, select "Hexadecimal" before typing. The value <code>4000480</code> in hex is 67,109,504 in decimal — entering the wrong base produces a completely different value that won't work.</div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- STEP 10 -->
+    <section class="section" id="step-10">
+      <p class="step-tag">Step 10</p>
+      <h2 class="step-title">Verify the Installation</h2>
+      <p class="intro">Run through this checklist to confirm SolidWorks is working before relying on it for coursework.</p>
+
+      <ol class="steps">
+        <li><strong>Open a new Part file:</strong> File → New → Part → OK. The part modeling environment should open without errors or crashes.</li>
+        <li><strong>Create a sketch:</strong> Click the Front Plane in the feature tree → Insert Sketch. Draw a rectangle using the corner rectangle tool.</li>
+        <li><strong>Extrude it:</strong> Exit the sketch → Features tab → Extruded Boss/Base → set depth to 25 mm → click the green checkmark. A 3D solid should appear.</li>
+        <li><strong>Rotate the model:</strong> Hold the middle mouse button and drag. Model rotation should be smooth and responsive.</li>
+        <li><strong>Check RealView:</strong> View → Display → RealView Graphics. If it is greyed out, that is expected and normal on this hardware configuration — it does not affect modeling functionality.</li>
+        <li><strong>Save a file:</strong> File → Save → save the part to the Desktop inside Windows. Confirm it saves without error.</li>
+      </ol>
+
+      <div class="callout ok">
+        <span class="callout-ico">✓</span>
+        <div>If you can create a part, extrude it, rotate the 3D view, and save — the installation is working correctly. RealView being unavailable is a cosmetic limitation only. Core modeling is fully functional.</div>
+      </div>
+
+      <div class="sub">Reduce Rendering Slowness — SolidWorks Settings</div>
+      <p>All of these are inside <strong>SolidWorks</strong> (not VMware or Windows). Apply them in order — the Display settings have the most noticeable impact on day-to-day interaction.</p>
+
+      <p><strong>Tools → Options → System Options → Display</strong> (do these first)</p>
+      <ol class="steps">
+        <li>In SolidWorks: <strong>Tools → Options → System Options → Display</strong>.</li>
+        <li>Uncheck <strong>"Dynamic highlight from graphics card"</strong> — this is the most impactful setting. When on, SolidWorks animates selection highlights (e.g., the orange outline that draws around a plane before your click registers) through the software OpenGL stack, blocking input until the animation finishes. Turning it off gives an immediate, non-animated highlight instead.</li>
+        <li>Uncheck <strong>"Shadows in Shaded Mode"</strong> if enabled.</li>
+        <li>Uncheck <strong>"Ambient Occlusion"</strong> if present and enabled.</li>
+        <li>Click <strong>OK</strong>.</li>
+      </ol>
+
+      <p><strong>Tools → Options → System Options → Performance</strong></p>
+      <ol class="steps">
+        <li>In SolidWorks: <strong>Tools → Options → System Options → Performance</strong>.</li>
+        <li>Drag <strong>"Image quality for shaded and draft quality HLR/HLV"</strong> slider all the way left.</li>
+        <li>Reduce <strong>Level of detail</strong> if the option is available.</li>
+        <li>Click <strong>OK</strong>.</li>
+      </ol>
+
+      <div class="callout ok">
+        <span class="callout-ico">✓</span>
+        <div><strong>Normal To without touching the viewport:</strong> click the plane's name in the <strong>Feature Tree</strong> (the left sidebar — "Top Plane", "Front Plane", etc.) rather than clicking the plane geometry in the 3D view. Feature Tree selection is a list operation — no OpenGL rendering, no orange animation. Then press <strong>Ctrl+8</strong> to snap Normal To. This is the fastest path on this hardware setup.</div>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-ico">⚠</span>
+        <div>
+          <strong>Known limitation — no fix found yet for SW 2026 on M2.</strong> When hovering over or clicking a reference plane in the viewport, SolidWorks animates an orange rectangle that draws out fully before your input is registered. This is a consequence of software OpenGL rendering every stroke of that outline on the CPU — there is currently no setting or registry edit known to eliminate it on SolidWorks 2026 running under VMware Fusion on Apple Silicon.<br><br>
+          <strong>Workarounds:</strong> Select planes from the <strong>Feature Tree</strong> (left sidebar) rather than clicking them in the viewport — no animation, instant selection. Press <strong>Ctrl+8</strong> after selecting to go Normal To. To remove planes from the viewport entirely: <strong>View → Hide/Show → Planes</strong>.<br><br>
+          <strong>If you find a fix, please contribute it</strong> — open an issue or pull request on the GitHub repository for this guide. Any validated solution (registry edit, VMware setting, SolidWorks option) will be documented here with credit.
+        </div>
+      </div>
+
+      <p><strong>Advanced: Try unlocking hardware OpenGL via VMware settings</strong></p>
+      <p>SolidWorks forces software OpenGL because VMware's virtual GPU (SVGA3D, backed by Metal on Apple Silicon) is not on Dassault's certified hardware list. A VMware configuration flag may change how the GPU is presented to the guest and allow SolidWorks to use hardware rendering instead. This is not guaranteed to work on Apple Silicon — try it and check Tools → Options → System Options → Performance to see if "Use Software OpenGL" becomes unchecked and unlocked.</p>
+      <ol class="steps">
+        <li><strong>Shut down the Windows VM completely</strong> and then quit VMware Fusion entirely (⌘+Q, not just close the window).</li>
+        <li>On your Mac, open <strong>Terminal</strong> (Spotlight → Terminal).</li>
+        <li>Run this command to add the flag to VMware's global preferences:
+          <code class="reg-path">echo 'mks.gl.allowBlacklistedDrivers = "TRUE"' &gt;&gt; ~/Library/Preferences/VMware/preferences.ini</code>
+        </li>
+        <li>Reopen VMware Fusion → start the VM → launch SolidWorks.</li>
+        <li>In SolidWorks: <strong>Tools → Options → System Options → Performance</strong>. If "Use Software OpenGL" is now unchecked and not grayed out, hardware rendering is active — the viewport will feel noticeably more responsive.</li>
+        <li>If there is no change, the setting had no effect on this hardware configuration. You can remove the line by opening <code>~/Library/Preferences/VMware/preferences.ini</code> in TextEdit and deleting it.</li>
+      </ol>
+
+      <div class="callout warn">
+        <span class="callout-ico">⚠</span>
+        <div><strong>Do not use <code>mks.enableMTLRenderer = "FALSE"</code></strong> — this disables Apple Metal, which is the entire graphics stack on Apple Silicon. On M2, disabling Metal breaks 3D graphics in the VM entirely. Ignore any guide that recommends this setting for M1/M2 Macs.</div>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-ico">ℹ</span>
+        <div><strong>Why it's still slow even after tuning.</strong> VMware Fusion on Apple Silicon uses Metal (Apple's GPU API) for host-side rendering and exposes it to the guest as an SVGA3D virtual GPU with OpenGL 4.2. SolidWorks doesn't recognize SVGA3D as a certified workstation GPU and forces software rendering. Every graphics call passes through: SolidWorks software OpenGL → x86 emulation → ARM virtualization → Metal → M2 silicon. This chain is structural. Light parts and individual assemblies are workable; heavy simulation and large assemblies belong on a campus workstation.</div>
+      </div>
+    </section>
+
+    <hr class="section-rule">
+
+    <!-- TROUBLESHOOTING -->
+    <section class="section" id="troubleshooting">
+      <p class="step-tag">Reference</p>
+      <h2 class="step-title">Troubleshooting</h2>
+
+      <div class="trouble">
+        <div class="trouble-q">"vc_redist.x64.exe did not install successfully" during Installation Manager</div>
+        <div class="trouble-a">Two related errors can appear here — both are harmless:<br><br>
+        <strong>1. "vc_redist.x64.exe did not install successfully"</strong> — the silent install flag failed. Click OK; the Installation Manager usually continues anyway.<br><br>
+        <strong>2. "Setup Failed — 0x80070666 — Another version of this product is already installed"</strong> — this means a <em>newer</em> version of the Visual C++ Redistributable is already on the system. Do not uninstall anything. Click Close — the requirement is already satisfied and SolidWorks will install fine.<br><br>
+        In both cases, simply dismiss the dialog and allow the Installation Manager to continue. Only if SolidWorks later fails to launch should you manually install the redistributable: navigate to <code>...\SOLIDWORKS 2026 SP02.1\PreReqs\VCRedist17\</code> and run <code>vc_redist.x64.exe</code> and <code>vc_redist.x86.exe</code> directly.</div>
+      </div>
+
+      <div class="trouble">
+        <div class="trouble-q">SolidWorks shows a black screen or crashes immediately on launch</div>
+        <div class="trouble-a"><strong>SolidWorks 2026:</strong> the registry fix is not used by SW 2026 — a black screen is more likely a Display settings issue. Confirm "Accelerate 3D Graphics" is enabled in VMware Fusion → VM Settings → Display. Restart the VM fully and try again.<br><br><strong>SolidWorks 2020–2025:</strong> almost always the registry fix. Verify: (a) you launched SolidWorks at least once before editing the registry so the keys exist; (b) all Workarounds DWORD values were entered with the base set to <strong>Hexadecimal</strong>, not Decimal; (c) "Accelerate 3D Graphics" is enabled in VMware settings. Restart Windows completely after making registry changes.</div>
+      </div>
+
+      <div class="trouble">
+        <div class="trouble-q">"Graphics card not supported" warning appears on every launch</div>
+        <div class="trouble-a">Expected behavior — SolidWorks does not recognize VMware's virtual GPU as a certified workstation card. Click OK to dismiss. To suppress it permanently: Tools → Options → System Options → Messages/Errors/Warnings → find the graphics message and hide it.</div>
+      </div>
+
+      <div class="trouble">
+        <div class="trouble-q">License activation fails with a network or connection error</div>
+        <div class="trouble-a">Confirm the VM's network adapter is set to <strong>NAT</strong> in VMware Fusion settings (not Host-Only or Bridged). NAT shares your Mac's network connection with the VM. If the VM can browse the web but activation still fails, Dassault's activation servers may be temporarily unavailable — wait an hour and try again.</div>
+      </div>
+
+      <div class="trouble">
+        <div class="trouble-q">VMware Fusion won't start — shows "kernel extension blocked"</div>
+        <div class="trouble-a">Go to <strong>System Settings → Privacy & Security</strong> on your Mac, scroll down, and click <strong>Allow</strong> next to the VMware system extension. A Mac restart is typically required after approving. This is a macOS security requirement enforced for all third-party kernel extensions.</div>
+      </div>
+
+      <div class="trouble">
+        <div class="trouble-q">The registry key path Gl2Shaders\Other doesn't exist</div>
+        <div class="trouble-a">The full key tree only populates after SolidWorks runs at least once. If <code>Gl2Shaders</code> or <code>Other</code> are missing as keys, create them manually: right-click the parent key → New → Key → name it exactly. Then create sub-keys as described in Step 8.</div>
+      </div>
+
+      <div class="trouble">
+        <div class="trouble-q">Selecting a plane or face animates slowly — orange outline draws out fully before input registers</div>
+        <div class="trouble-a"><strong>No complete fix is currently known for SolidWorks 2026 on VMware/M2.</strong> Two separate effects are at play:<br><br>
+        <strong>Hover highlight (before clicking):</strong> try <strong>Tools → Options → System Options → Display → uncheck "Dynamic highlight from graphics card"</strong>. This may reduce the animated hover effect.<br><br>
+        <strong>Selection visualization (orange rectangle after clicking in the viewport):</strong> rendered stroke by stroke on the CPU in software OpenGL mode. No setting or registry edit has been found to eliminate this on SW 2026 + VMware Fusion + Apple Silicon. VMware's <code>mks.gl.allowBlacklistedDrivers</code> flag and the global <code>preferences.ini</code> approach were tested and did not resolve it.<br><br>
+        <strong>Best workaround:</strong> select planes from the <strong>Feature Tree</strong> (left sidebar) — no animation, instant selection. Then press <strong>Ctrl+8</strong> for Normal To. To hide planes from the viewport entirely: <strong>View → Hide/Show → Planes</strong>.<br><br>
+        If you find a fix, open an issue or pull request on the guide's GitHub repository so it can be documented here.</div>
+      </div>
+
+      <div class="trouble">
+        <div class="trouble-q">SolidWorks runs but feels very sluggish</div>
+        <div class="trouble-a">
+          There are several layers to address:<br><br>
+          <strong>1. SolidWorks internal settings (most impactful):</strong> In SolidWorks — <strong>Tools → Options → System Options → Performance</strong>. Drag the image quality slider left and reduce level of detail. Under Display, turn off anti-aliasing. These lower the rendering load on the emulated GPU.<br><br>
+          <strong>2. Check macOS memory pressure:</strong> On your Mac, open <strong>Activity Monitor</strong> (Spotlight → "Activity Monitor") → click the <strong>Memory</strong> tab → look at the memory pressure bar at the bottom. If it is yellow or red, macOS is swapping and the VM is being starved regardless of how much you allocated. Close unused Mac apps.<br><br>
+          <strong>3. VM resource balance:</strong> With 16 GB total RAM, giving the VM 10 GB leaves macOS only 6 GB — which can cause the host to page and slow everything down. 8 GB for the VM is usually the better balance. In VMware Fusion, shut down the VM, then go to VM Settings → Processors &amp; Memory and adjust.<br><br>
+          <strong>4. Structural limitation:</strong> SolidWorks (x86) → Windows ARM emulates x86 → M2 runs ARM. Every instruction passes through two translation layers. No amount of tuning fully removes this overhead. Heavy simulation and rendering belong on a campus workstation.
+        </div>
+      </div>
+
+      <div class="trouble">
+        <div class="trouble-q">The UUP Dump shell script fails on macOS</div>
+        <div class="trouble-a">Make the script executable first with <code>chmod +x uup_download_macos.sh</code>, then run it with <code>bash uup_download_macos.sh</code>. If it still fails, install Xcode Command Line Tools: <code>xcode-select --install</code> in Terminal, then retry the script.</div>
+      </div>
+
+      <div class="trouble">
+        <div class="trouble-q">OOBE\BYPASSNRO command isn't available or doesn't work</div>
+        <div class="trouble-a">An alternative bypass: when on the Microsoft sign-in screen during setup, press <strong>Shift+F10</strong> to open CMD, then run <code>ipconfig /release</code> to cut the network connection. Setup will then offer a "Sign in later" or offline account path. Reconnect the VM network (Virtual Machine → Network Adapter → NAT) after Windows finishes setup.</div>
+      </div>
+    </section>
+
+    <!-- SOURCES -->
+    <div class="sources" id="sources">
+      <p class="sources-label">Sources & References</p>
+      <a href="https://machow2.com/run-solidworks-mac/" target="_blank" rel="noopener">How To Run SolidWorks on a Mac in 2026 — MacHow2</a>
+      <a href="https://community.broadcom.com/vmware-cloud-foundation/communities/community-home/digestviewer/viewthread?GroupId=7165&MessageKey=df0ee21e-9c99-4133-bb53-f7fac4c00582" target="_blank" rel="noopener">How to run SolidWorks/NX on Fusion 13.5 with M2 — VMware Community (Broadcom)</a>
+      <a href="https://medium.com/@wearedelicious/how-to-enable-hardware-gl-and-realview-in-solidworks-on-a-virtual-machine-for-a-macbook-pro-da065e215268" target="_blank" rel="noopener">Enabling Hardware GL and RealView in SolidWorks on a VM — Medium</a>
+      <a href="https://files.solidworks.com/education/EDU_SW_SEK_Installation_Guide_ENG_v2.pdf" target="_blank" rel="noopener">SolidWorks Student Edition Installation Guide — Dassault Systèmes (PDF)</a>
+      <a href="https://kb.parallels.com/en/122790" target="_blank" rel="noopener">Hardware acceleration grayed out in SolidWorks — Parallels KB (OpenGL reference)</a>
+      <a href="https://uupdump.net" target="_blank" rel="noopener">UUP Dump — Windows 11 ARM64 ISO builder</a>
+      <a href="https://www.acecloudhosting.com/blog/solidworks-on-mac/" target="_blank" rel="noopener">4 Best Methods to Run SolidWorks on Mac — Ace Cloud Hosting</a>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// Active nav highlighting via IntersectionObserver
+(function () {
+  const sections = document.querySelectorAll('.section[id], .sources[id]');
+  const links = document.querySelectorAll('.nav-link[href^="#"]');
+
+  if (!sections.length || !links.length) return;
+
+  const map = {};
+  links.forEach(l => { map[l.getAttribute('href').slice(1)] = l; });
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const l = map[e.target.id];
+        if (l) l.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-15% 0px -75% 0px', threshold: 0 });
+
+  sections.forEach(s => io.observe(s));
+
+  // Set initial active state
+  map['overview'] && map['overview'].classList.add('active');
+})();
+</script>
