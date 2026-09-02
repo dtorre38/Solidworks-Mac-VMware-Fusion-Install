@@ -1,3 +1,8 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SolidWorks on M2 Mac</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -573,6 +578,8 @@ tr:last-child td { border-bottom: none; }
   html { scroll-behavior: auto; }
 }
 </style>
+</head>
+<body>
 
 <!-- ═══════════════════════════════ HEADER ═══════════════════════════════ -->
 <header class="page-header">
@@ -785,7 +792,7 @@ tr:last-child td { border-bottom: none; }
           </ul>
         </li>
         <li>Click <strong>"Create download package."</strong> You'll download a small .zip (~1 MB).</li>
-        <li>⚠ <strong>Before proceeding:</strong> check whether the summary panel on the right shows a warning that says <em>"Windows is required to create the ISO image."</em> If it does, skip to Method B — the macOS script will not work for that build, and Method B is simpler anyway.</li>
+        <li>⚠ <strong>Before proceeding:</strong> check whether the summary panel on the right shows a warning that says <em>"Windows is required to create the ISO image."</em> If it does, skip to Method C — the macOS script will not work for that build, and Method C is simpler anyway.</li>
         <li>If no Windows warning appears: extract the .zip and run in Terminal:
           <div class="code-block">
             <div class="code-label">macOS Terminal</div>
@@ -1283,3 +1290,5 @@ bash uup_download_macos.sh</pre>
   map['overview'] && map['overview'].classList.add('active');
 })();
 </script>
+</body>
+</html>
